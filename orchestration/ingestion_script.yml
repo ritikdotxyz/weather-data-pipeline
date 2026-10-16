@@ -1,0 +1,33 @@
+id: python_ingestion
+namespace: weather_data_analytics_platform
+
+description: This flow will ingest data from NOAA website 
+  and store it in a local filesystem
+
+tasks:
+  - id: ingestion_script
+    type: io.kestra.plugin.scripts.python.Commands
+    namespaceFiles:
+      enabled: True
+    taskRunner:
+      type: io.kestra.plugin.scripts.runner.docker.Docker
+      volumes:
+        - /home/ritik/workspace/projects/weather_data_analytics_platform:/app
+    containerImage: python:3.12-slim
+    dependencies:
+      - curl-cffi>=0.16.3
+      - fastparquet>=2026.9.0
+      - pandas>=3.0.6
+      - pyarrow>=26.0.0
+      - loguru>=0.7.3
+    commands:
+      - cd /app
+      - python ingestion/main.py
+    retry:
+      type: constant
+      interval: PT2S
+      maxAttempts: 3
+      maxDuration: PT1M
+      warningOnRetry: false
+    
+    

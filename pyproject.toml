@@ -1,0 +1,14 @@
+[project]
+name = "weather-data-analytics-platform"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "curl-cffi>=0.16.3",
+    "duckdb>=1.5.6",
+    "fastparquet>=2026.9.0",
+    "loguru>=0.7.3",
+    "pandas>=3.0.6",
+    "pyarrow>=26.0.0",
+]

@@ -1,0 +1,73 @@
+services:
+
+  kestra_postgres:
+    image: postgres:18
+    volumes:
+      - kestra_postgres_data:/var/lib/postgresql
+    environment:
+      POSTGRES_DB: ${KESTRA_POSTGRES_DB}
+      POSTGRES_USER: ${KESTRA_POSTGRES_USERNAME}
+      POSTGRES_PASSWORD: ${KESTRA_POSTGRES_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+  kestra:
+    image: kestra/kestra:latest
+    pull_policy: always
+    user: "root"
+    command: server standalone
+    volumes:
+      - kestra_data:/app/storage
+      - /var/run/docker.sock:/var/run/docker.sock
+      - kestra_tmp:/tmp/kestra-wd
+      - .:/opt/weather_data_analytics_platform
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    environment: 
+      KESTRA_CONFIGURATION: |
+        datasources:
+          postgres:
+            url: jdbc:postgresql://kestra_postgres:${KESTRA_POSTGRES_PORT}/${KESTRA_POSTGRES_DB}
+            driverClassName: org.postgresql.Driver
+            username: ${KESTRA_POSTGRES_USERNAME}
+            password: ${KESTRA_POSTGRES_PASSWORD}
+        kestra:
+          server:
+            basicAuth:
+              username: "${KESTRA_USERNAME}"
+              password: "${KESTRA_PASSWORD}"
+          plugins:
+            configurations:
+              - type: io.kestra.plugin.scripts.runner.docker.docker
+                values:
+                  volume-enabled: true
+          repository:
+            type: postgres
+          storage:
+            type: local
+            local:
+              basePath: "/app/storage"
+          queue:
+            type: postgres
+          tasks:
+            tmpDir:
+              path: /tmp/kestra-wd/tmp
+          url: http://localhost:8080/
+    depends_on:
+      kestra_postgres:
+        condition: service_started
+
+
+
+
+volumes:
+  kestra_postgres_data:
+    driver: local
+  kestra_data:
+    driver: local
+  kestra_tmp:
+    driver: local
+  
