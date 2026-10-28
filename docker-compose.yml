@@ -22,7 +22,7 @@ services:
       - kestra_data:/app/storage
       - /var/run/docker.sock:/var/run/docker.sock
       - kestra_tmp:/tmp/kestra-wd
-      - .:/opt/weather_data_analytics_platform
+      - .:/opt/weather_data_pipeline
     ports:
       - "8080:8080"
       - "8081:8081"
@@ -60,7 +60,16 @@ services:
       kestra_postgres:
         condition: service_started
 
-
+  dashboard:
+    build:
+      context: .
+      dockerfile: dashboard/Dockerfile
+    volumes:
+      - ./dashboard:/app/dashboard
+      - ./weather_data.duckdb:/app/weather_data.duckdb:ro
+    ports:
+      - "8501:8501"
+  
 
 
 volumes:

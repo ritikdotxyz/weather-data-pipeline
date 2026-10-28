@@ -6,9 +6,13 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "curl-cffi>=0.16.3",
+    "dbt>=2.0.9",
+    "dbt-duckdb>=1.11.0",
     "duckdb>=1.5.6",
     "fastparquet>=2026.9.0",
     "loguru>=0.7.3",
     "pandas>=3.0.6",
+    "plotly>=7.1.0",
     "pyarrow>=26.0.0",
+    "streamlit>=1.66.1",
 ]

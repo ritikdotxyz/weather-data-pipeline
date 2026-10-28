@@ -1,0 +1,30 @@
+id: dbt_transformation
+namespace: weather_data_pipeline
+
+tasks:
+  - id: dt
+    type: io.kestra.plugin.dbt.cli.DbtCLI
+    taskRunner:
+      type: io.kestra.plugin.scripts.runner.docker.Docker
+      volumes:
+        - /home/ritik/workspace/projects/weather_data_pipeline/weather_data.duckdb:/data/weather_data.duckdb
+        - /home/ritik/workspace/projects/weather_data_pipeline:/app
+    containerImage: ghcr.io/kestra-io/dbt-duckdb:latest
+    projectDir: /app/dbt_weather
+    commands:
+      - dbt build 
+    profiles: |
+      dbt_weather:
+        target: prod
+        outputs:
+          prod:
+            type: duckdb
+            path: /data/weather_data.duckdb
+            schema: prod
+            threads: 1
+            extensions:
+              - parquet
+            settings:
+              memory_limit: '2GB'
+              preserve_insertion_order: false
+

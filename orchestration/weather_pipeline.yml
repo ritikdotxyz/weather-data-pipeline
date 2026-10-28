@@ -1,0 +1,24 @@
+id: weather_data_pipeline
+namespace: weather_data_pipeline
+
+tasks:
+  - id: ingestion_script
+    type: io.kestra.plugin.core.flow.Subflow
+    namespace: weather_data_pipeline
+    flowId: ingestion_script
+    wait: true
+    transmitFailed: true
+
+  - id: load_warehouse
+    type: io.kestra.plugin.core.flow.Subflow
+    namespace: weather_data_pipeline
+    flowId: load_warehouse
+    wait: true
+    transmitFailed: true
+
+  - id: dbt_transformation
+    type: io.kestra.plugin.core.flow.Subflow
+    namespace: weather_data_pipeline
+    flowId: dbt_transformation
+    wait: true
+    transmitFailed: true

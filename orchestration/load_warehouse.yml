@@ -1,5 +1,5 @@
 id: load_warehouse
-namespace: weather_data_analytics_platform
+namespace: weather_data_pipeline
 
 description: This  flow will execute a python script that will add all the raw
   parquet data to duckdb
@@ -12,7 +12,7 @@ tasks:
     taskRunner:
       type: io.kestra.plugin.scripts.runner.docker.Docker
       volumes:
-        - /home/ritik/workspace/projects/weather_data_analytics_platform:/app
+        - /home/ritik/workspace/projects/weather_data_pipeline:/app
     containerImage: python:3.12-slim
     dependencies:
       - duckdb>=1.5.6

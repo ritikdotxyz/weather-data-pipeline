@@ -14,8 +14,11 @@ def main():
         con.execute("CREATE SCHEMA IF NOT EXISTS prod")
 
         con.execute(f"""
-            SELECT * FROM read_parquet('{DATA_PATH}/*.parquet')
+            CREATE OR REPLACE TABLE prod.weather_ssod_t1 AS
+            SELECT * FROM read_parquet('{DATA_PATH}/*.parquet', union_by_name=true)
         """)
+
+        con.close()
 
     except Exception as e:
         logger.debug(f"Error: {e}")
